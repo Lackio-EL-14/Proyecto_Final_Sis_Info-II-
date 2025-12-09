@@ -1,0 +1,24 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-ucb-dw-apple-sales-7989973"
+		},
+		"ls_sa_raw_apple_connectionString": {
+			"value": ""
+		},
+		"ls_sql_dw_apple_password": {
+			"value": ""
+		},
+		"ls_sql_dw_apple_properties_typeProperties_server": {
+			"value": "sql-ucb-sisinfo-apple-sales-delta7989973.database.windows.net"
+		},
+		"ls_sql_dw_apple_properties_typeProperties_database": {
+			"value": "dw_apple-sales_delta7989973"
+		},
+		"ls_sql_dw_apple_properties_typeProperties_userName": {
+			"value": "Edson"
+		}
+	}
+}
