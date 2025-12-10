@@ -5,6 +5,11 @@
 			"referenceName": "ls_sa_raw_apple",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"overflow": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "Bronce"
 		},

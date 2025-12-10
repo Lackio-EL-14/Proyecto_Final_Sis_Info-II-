@@ -28,7 +28,7 @@
 				"type": "varchar"
 			},
 			{
-				"name": "opened_year",
+				"name": "opened",
 				"type": "varchar"
 			}
 		],

@@ -12,24 +12,32 @@
 		"type": "AzureSqlTable",
 		"schema": [
 			{
-				"name": "product_id",
-				"type": "varchar"
+				"name": "Product_ID",
+				"type": "nvarchar"
 			},
 			{
-				"name": "product_name",
-				"type": "varchar"
+				"name": "Product_Name",
+				"type": "nvarchar"
 			},
 			{
-				"name": "category_id",
-				"type": "varchar"
+				"name": "Category_ID",
+				"type": "nvarchar"
 			},
 			{
-				"name": "launch_date",
-				"type": "varchar"
+				"name": "Launch_Date",
+				"type": "nvarchar"
 			},
 			{
-				"name": "price",
-				"type": "varchar"
+				"name": "Price",
+				"type": "nvarchar"
+			},
+			{
+				"name": "notes",
+				"type": "nvarchar"
+			},
+			{
+				"name": "_overflow",
+				"type": "nvarchar"
 			}
 		],
 		"typeProperties": {

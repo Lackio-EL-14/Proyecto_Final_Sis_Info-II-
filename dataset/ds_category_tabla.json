@@ -13,15 +13,15 @@
 		"schema": [
 			{
 				"name": "category_id",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "category_name",
-				"type": "varchar"
+				"type": "nvarchar"
 			},
 			{
 				"name": "extra_note",
-				"type": "varchar"
+				"type": "nvarchar"
 			}
 		],
 		"typeProperties": {
