@@ -45,6 +45,10 @@
 			{
 				"name": "notes",
 				"type": "String"
+			},
+			{
+				"name": "overflows",
+				"type": "String"
 			}
 		]
 	}

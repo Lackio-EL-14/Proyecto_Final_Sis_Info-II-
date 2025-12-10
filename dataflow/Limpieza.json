@@ -1,0 +1,277 @@
+{
+	"name": "Limpieza",
+	"properties": {
+		"folder": {
+			"name": "Silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_category_tabla",
+						"type": "DatasetReference"
+					},
+					"name": "source1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_products_tabla",
+						"type": "DatasetReference"
+					},
+					"name": "source2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sales_tabla",
+						"type": "DatasetReference"
+					},
+					"name": "source3"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_stores_tabla",
+						"type": "DatasetReference"
+					},
+					"name": "source4"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_category_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_products_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sales_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink3"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "filter1"
+				},
+				{
+					"name": "aggregate1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "derivedColumn3"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "derivedColumn4"
+				},
+				{
+					"name": "select2"
+				},
+				{
+					"name": "cast1"
+				},
+				{
+					"name": "filter3"
+				},
+				{
+					"name": "derivedColumn5"
+				},
+				{
+					"name": "derivedColumn6"
+				},
+				{
+					"name": "filter4"
+				},
+				{
+					"name": "aggregate2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          category_id as string,",
+				"          category_name as string,",
+				"          extra_note as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source1",
+				"source(output(",
+				"          Product_ID as string,",
+				"          Product_Name as string,",
+				"          Category_ID as string,",
+				"          Launch_Date as string,",
+				"          Price as string,",
+				"          notes as string,",
+				"          {_overflow} as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source2",
+				"source(output(",
+				"          sale_id as string,",
+				"          sale_date as string,",
+				"          store_id as string,",
+				"          product_id as string,",
+				"          quantity as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source3",
+				"source(output(",
+				"          store_id as string,",
+				"          store_name as string,",
+				"          city as string,",
+				"          country as string,",
+				"          opened as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source4",
+				"source1 derive(category_id = initCap(trim(category_id)),",
+				"          category_name = initCap(trim(replace(category_name, '\"', '')))) ~> derivedColumn1",
+				"derivedColumn1 filter(!isNull(category_id) && length(category_id) > 0 && !isNull(category_name) && length(category_name) > 0) ~> filter1",
+				"filter1 aggregate(groupBy(category_id),",
+				"     category_name = first(category_name)) ~> aggregate1",
+				"source2 derive(Temp_price = iif(!isNull({_overflow}), concat(Price, notes), Price)) ~> derivedColumn2",
+				"derivedColumn2 derive(Clean_Price = iif(\r",
+				"    lower(trim(Temp_price)) == 'one thousand seven hundred sixty one',\r",
+				"    1761,\r",
+				"    toInteger(replace(replace(replace(Temp_price, '$', ''), ',', ''),'.', ''))\r",
+				"),",
+				"          Clean_Date = coalesce(\r",
+				"    toDate(Launch_Date, 'yyyy-MM-dd'),        \r",
+				"    toDate(Launch_Date, 'yyyy/MM/dd'),\r",
+				"    toDate(Launch_Date, 'dd/MM/yyyy'),        \r",
+				"    toDate(Launch_Date, 'MMM dd yyyy'),      \r",
+				"    toDate(Launch_Date, 'yyyy.MM.dd'),       \r",
+				"    toDate(Launch_Date, 'dd-MM-yyyy')\r",
+				")) ~> derivedColumn3",
+				"derivedColumn3 filter(!isNull(Clean_Price) && !isNull(Clean_Date) && !isNull(Category_ID)) ~> filter2",
+				"filter2 select(mapColumn(",
+				"          Product_ID,",
+				"          Product_Name,",
+				"          Category_ID,",
+				"          Clean_Date,",
+				"          Clean_Price",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"source3 derive(Clean_Date = coalesce(\r",
+				"    toDate(sale_date, 'yyyy-MM-dd'),\r",
+				"    toDate(sale_date, 'dd-MM-yyyy')\r",
+				")) ~> derivedColumn4",
+				"derivedColumn4 select(mapColumn(",
+				"          sale_id,",
+				"          Clean_Date,",
+				"          store_id,",
+				"          product_id,",
+				"          quantity",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select2",
+				"select2 cast(output(",
+				"          Clean_Date as date 'yyyy-MM-dd',",
+				"          quantity as integer '000'",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 filter(!isNull(Clean_Date) && !isNull(sale_id)) ~> filter3",
+				"source4 derive(clean_store_name = trim(replace(replace(store_name, \"'\", \"\"), '\"', \"\")),",
+				"          clean_city = trim(replace(replace(city, \"'\", \"\"), '\"', \"\")),",
+				"          clean_country = trim(replace(replace(country, \"'\", \"\"), '\"', \"\"))) ~> derivedColumn5",
+				"derivedColumn5 derive(clean_year = toInteger(replace(opened, 'O', '0'))) ~> derivedColumn6",
+				"derivedColumn6 filter(!regexMatch(clean_store_name, '^[0-9]+$')) ~> filter4",
+				"filter4 aggregate(groupBy(store_id),",
+				"     store_name = first(clean_store_name),",
+				"          city = first(clean_city),",
+				"          country = first(clean_country),",
+				"          opened = first(clean_year)) ~> aggregate2",
+				"aggregate1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          category_id as string,",
+				"          category_name as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          product_id as string,",
+				"          product_name as string,",
+				"          category_id as string,",
+				"          launch_date as date,",
+				"          price as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          product_id = Product_ID,",
+				"          product_name = Product_Name,",
+				"          category_id = Category_ID,",
+				"          launch_date = Clean_Date,",
+				"          price = Clean_Price",
+				"     )) ~> sink2",
+				"filter3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          sale_id as string,",
+				"          sale_date as date,",
+				"          store_id as string,",
+				"          product_id as string,",
+				"          quantity as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          sale_id,",
+				"          sale_date = Clean_Date,",
+				"          store_id,",
+				"          product_id,",
+				"          quantity",
+				"     )) ~> sink3"
+			]
+		}
+	}
+}
