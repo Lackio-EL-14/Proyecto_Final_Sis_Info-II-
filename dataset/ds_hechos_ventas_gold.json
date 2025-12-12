@@ -42,9 +42,8 @@
 			},
 			{
 				"name": "total_amount",
-				"type": "decimal",
-				"precision": 12,
-				"scale": 2
+				"type": "int",
+				"precision": 10
 			}
 		],
 		"typeProperties": {

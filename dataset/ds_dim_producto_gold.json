@@ -25,22 +25,21 @@
 				"type": "varchar"
 			},
 			{
-				"name": "launch_date",
-				"type": "date"
-			},
-			{
-				"name": "price",
-				"type": "decimal",
-				"precision": 12,
-				"scale": 2
-			},
-			{
 				"name": "category_id",
 				"type": "varchar"
 			},
 			{
 				"name": "category_name",
 				"type": "varchar"
+			},
+			{
+				"name": "launch_date",
+				"type": "date"
+			},
+			{
+				"name": "price",
+				"type": "int",
+				"precision": 10
 			}
 		],
 		"typeProperties": {

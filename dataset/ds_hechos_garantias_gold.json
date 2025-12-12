@@ -31,11 +31,6 @@
 				"precision": 10
 			},
 			{
-				"name": "product_sk",
-				"type": "int",
-				"precision": 10
-			},
-			{
 				"name": "repair_status",
 				"type": "varchar"
 			}
