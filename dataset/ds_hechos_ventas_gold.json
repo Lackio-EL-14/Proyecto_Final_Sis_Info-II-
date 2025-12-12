@@ -1,0 +1,55 @@
+{
+	"name": "ds_hechos_ventas_gold",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_apple",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "sale_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "sale_id",
+				"type": "varchar"
+			},
+			{
+				"name": "date_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "product_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "store_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "quantity",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "total_amount",
+				"type": "decimal",
+				"precision": 12,
+				"scale": 2
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "hechos_ventas"
+		}
+	}
+}

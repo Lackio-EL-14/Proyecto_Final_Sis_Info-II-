@@ -1,0 +1,48 @@
+{
+	"name": "ds_hechos_garantias_gold",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_apple",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "warranty_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "claim_id",
+				"type": "varchar"
+			},
+			{
+				"name": "claim_date_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "sale_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "product_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "repair_status",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "hechos_garantias"
+		}
+	}
+}

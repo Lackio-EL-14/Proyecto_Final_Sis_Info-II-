@@ -1,0 +1,46 @@
+{
+	"name": "ds_dim_tienda_gold",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_sql_dw_apple",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Gold"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "store_sk",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "store_id",
+				"type": "varchar"
+			},
+			{
+				"name": "store_name",
+				"type": "varchar"
+			},
+			{
+				"name": "city",
+				"type": "varchar"
+			},
+			{
+				"name": "country",
+				"type": "varchar"
+			},
+			{
+				"name": "opened_year",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "gold",
+			"table": "dim_tienda"
+		}
+	}
+}
