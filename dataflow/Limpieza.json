@@ -34,6 +34,13 @@
 						"type": "DatasetReference"
 					},
 					"name": "source4"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_warranty_tabla",
+						"type": "DatasetReference"
+					},
+					"name": "source5"
 				}
 			],
 			"sinks": [
@@ -57,6 +64,20 @@
 						"type": "DatasetReference"
 					},
 					"name": "sink3"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_stores_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink4"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_warranty_silver",
+						"type": "DatasetReference"
+					},
+					"name": "sink5"
 				}
 			],
 			"transformations": [
@@ -104,6 +125,15 @@
 				},
 				{
 					"name": "aggregate2"
+				},
+				{
+					"name": "derivedColumn7"
+				},
+				{
+					"name": "filter5"
+				},
+				{
+					"name": "aggregate3"
 				}
 			],
 			"scriptLines": [
@@ -151,6 +181,16 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source4",
+				"source(output(",
+				"          claim_id as string,",
+				"          claim_date as string,",
+				"          sale_id as string,",
+				"          repair_status as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> source5",
 				"source1 derive(category_id = initCap(trim(category_id)),",
 				"          category_name = initCap(trim(replace(category_name, '\"', '')))) ~> derivedColumn1",
 				"derivedColumn1 filter(!isNull(category_id) && length(category_id) > 0 && !isNull(category_name) && length(category_name) > 0) ~> filter1",
@@ -209,6 +249,19 @@
 				"          city = first(clean_city),",
 				"          country = first(clean_country),",
 				"          opened = first(clean_year)) ~> aggregate2",
+				"source5 derive(clean_date = coalesce(\r",
+				"    toDate(claim_date, 'yyyy-MM-dd'),\r",
+				"    toDate(claim_date, 'dd/MM/yyyy'),\r",
+				"    toDate(claim_date, 'dd-MM-yyyy'),\r",
+				"    toDate(claim_date, 'yyyy/MM/dd')\r",
+				"),",
+				"          clean_status = initCap(trim(replace(repair_status, 'pendng', 'Pending'))),",
+				"          clean_sale_id = trim(sale_id)) ~> derivedColumn7",
+				"derivedColumn7 filter(!isNull(clean_sale_id) && !isNull(clean_date) && length(clean_sale_id) > 0) ~> filter5",
+				"filter5 aggregate(groupBy(claim_id),",
+				"     sale_id = first(clean_sale_id),",
+				"          claim_date = first(clean_date),",
+				"          repair_status = first(clean_status)) ~> aggregate3",
 				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
@@ -270,7 +323,53 @@
 				"          store_id,",
 				"          product_id,",
 				"          quantity",
-				"     )) ~> sink3"
+				"     )) ~> sink3",
+				"aggregate2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          store_id as string,",
+				"          store_name as string,",
+				"          city as string,",
+				"          country as string,",
+				"          opened_year as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          store_id,",
+				"          store_name,",
+				"          city,",
+				"          country,",
+				"          opened_year = opened",
+				"     )) ~> sink4",
+				"aggregate3 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          claim_id as string,",
+				"          claim_date as date,",
+				"          sale_id as string,",
+				"          repair_status as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          claim_id,",
+				"          claim_date,",
+				"          sale_id,",
+				"          repair_status",
+				"     )) ~> sink5"
 			]
 		}
 	}

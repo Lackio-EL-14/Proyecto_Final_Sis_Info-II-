@@ -1,9 +1,9 @@
 {
-	"name": "Volteo",
+	"name": "Datos limpios",
 	"properties": {
 		"activities": [
 			{
-				"name": "Volteo_de_datos",
+				"name": "Limpieza",
 				"type": "ExecuteDataFlow",
 				"dependsOn": [],
 				"policy": {
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"dataflow": {
-						"referenceName": "Volteo_de_Datos",
+						"referenceName": "Limpieza",
 						"type": "DataFlowReference"
 					},
 					"compute": {
@@ -28,7 +28,7 @@
 			}
 		],
 		"folder": {
-			"name": "Bronce"
+			"name": "Silver"
 		},
 		"annotations": []
 	}
